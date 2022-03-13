@@ -1,0 +1,86 @@
+# 리눅스 ssh 서버 설치
+
+root 권한으로 수행
+
+## SELinux 비활성
+- vi 에디터로  `/etc/sysconfig/selinux` 파일을 열고 `SELINUX`의 값을 `disabled`로 수정한다.
+- 설정 변경 후 재부팅한다.
+
+## ssh 서버 설치 여부 확인
+```shell
+yum list openssh-server
+```
+
+## ssh 서버 설치하기
+```shell
+yum -y install openssh-server
+```
+
+--------------
+
+## ssh 서비스 실행하기
+
+### 서비스 시작
+
+```shell
+# 서비스 시작하기
+systemctl start sshd.service
+
+# 결과 확인
+systemctl status sshd.service | grep Active
+```
+
+### 부팅시 자동 실행 등록
+
+```shell
+# 자동실행 등록
+systemctl enable sshd.service
+
+# 결과확인
+systemctl list-unit-files | grep sshd.service
+```
+
+------------------
+
+## ssh 서버 설정 (포트변경, 루트 접근 차단)
+
+### 설정파일 수정
+
+```shell
+vi /etc/ssh/sshd_config
+```
+- `Port` 항목을 찾아 주석을 해제(# 기호 삭제)하고 적용할 포트 명시 (9901)
+- `PermitRootLogin yes`라는 라인을 찾아 주석을 삭제하고 값을 no로 변경
+
+설정파일 수정 후 sshd 서비스를 재시작한다.
+```shell
+systemctl restart sshd.service
+```
+
+
+### 방화벽 설정
+
+```shell
+# 방화벽 실행 여부 확인
+firewall-cmd --state
+
+# 방화벽에 ssh 서비스 등록 여부 확인
+# -> 대체로 ssh의 기본 포트는 방화벽에 등록되어 있다.
+firewall-cmd --zone=public --list-services | grep ssh
+
+# 서비스가 등록되어 있다면 ssh의 기본 서비스 차단
+firewall-cmd --permanent --zone=public --remove-service ssh
+
+# telnet의 기본 서비스 차단
+firewall-cmd --permanent --zone=public --remove-service telnet
+
+# ssh에서 설정한 포트번호 추가
+firewall-cmd --permanent --zone=public --add-port=9901/tcp
+
+# 방화벽 재시작
+firewall-cmd --reload
+```
+
+
+
+

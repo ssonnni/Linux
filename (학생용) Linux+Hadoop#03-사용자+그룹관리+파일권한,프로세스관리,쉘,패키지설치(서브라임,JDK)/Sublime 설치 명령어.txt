@@ -1,0 +1,11 @@
+﻿## sublime 설치
+
+### yum 저장소 URL 추가
+```
+yum-config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+```
+
+### 설치하기
+```
+yum install sublime-text
+```

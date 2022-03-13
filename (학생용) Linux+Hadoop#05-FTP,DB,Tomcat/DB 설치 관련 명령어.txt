@@ -1,0 +1,24 @@
+# 리눅스 MariaDB 설치
+
+## 클라이언트 및 서버 설치
+```shell
+yum -y install mariadb mariadb-server
+```
+
+## 서비스 시작 및 자동시작 등록
+```shell
+systemctl start mariadb.service
+systemctl enable mariadb.service
+```
+
+## 기본 환경설정
+명령어 수행 후 프로그램이 제시하는 항목에 대하여 `y`/`n`으로 답변
+```shell
+mysql_secure_installation
+```
+
+## 사용자 계정 생성하기
+```mysql
+create user '아이디'@'접근허용호스트' identified by '비밀번호';
+grant all privileges on 데이터베이스이름.* to '아이디'@'접근허용호스트';
+```
